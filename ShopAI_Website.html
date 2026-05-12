@@ -77,7 +77,7 @@ nav {
   font-size: clamp(2.5rem, 6vw, 5rem);
   font-weight: 800; line-height: 1.1;
   position: relative; z-index: 1;
-  animation: fadeUp 0.6s ease 0.1s both;
+  animation: fadeUp 0.6s ease 0.1s both;ca-app-pub-6956756105682569/4058458257
 }
 .hero h1 .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .hero p { font-size: 1.1rem; color: var(--text2); max-width: 550px; margin: 1rem auto; line-height: 1.7; position: relative; z-index: 1; animation: fadeUp 0.6s ease 0.2s both; }
@@ -382,7 +382,7 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 
         <div class="typing-indicator" id="typingIndicator">
           <div class="typing-dot"></div>
-          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>ca-app-pub-6956756105682569/4058458257
           <div class="typing-dot"></div>
         </div>
 
@@ -449,7 +449,7 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
     <p class="section-sub">Har platform alag commission deta hai. Hum sabse best rate wala automatically suggest karte hain.</p>
     <div class="earn-grid">
       <div class="earn-card">
-        <div class="earn-platform">🛒</div>
+        <div class="earn-platform">🛒</div>ca-app-pub-6956756105682569/4058458257
         <div class="earn-name">Amazon</div>
         <div class="earn-rate">2–10%</div>
         <div class="earn-label">category ke hisaab se</div>
@@ -602,7 +602,7 @@ const products = {
     { name: 'HP Victus 15 AMD', price: 55990, platform: 'Amazon', commission: 1680, rating: 4.4 },
     { name: 'ASUS TUF F15', price: 65990, platform: 'Flipkart', commission: 1980, rating: 4.6 }
   ],
-  earbuds: [
+  earbuds: [ca-app-pub-6956756105682569/4058458257
     { name: 'boAt Airdopes 141', price: 1299, platform: 'Amazon', commission: 65, rating: 4.1 },
     { name: 'JBL Wave Beam TWS', price: 2499, platform: 'Flipkart', commission: 125, rating: 4.3 },
     { name: 'Noise Buds VS104 Max', price: 1499, platform: 'Meesho', commission: 75, rating: 4.0 },
@@ -613,7 +613,7 @@ const products = {
     { name: 'Kanjivaram Silk Saree', price: 4999, platform: 'Myntra', commission: 375, rating: 4.6 },
     { name: 'Designer Embroidered Georgette', price: 1999, platform: 'Ajio', commission: 150, rating: 4.2 },
     { name: 'Chanderi Cotton Silk Saree', price: 1599, platform: 'Meesho', commission: 120, rating: 4.3 }
-  ],
+  ],ca-app-pub-6956756105682569/4058458257
   airfryer: [
     { name: 'Philips Essential Air Fryer', price: 5999, platform: 'Amazon', commission: 360, rating: 4.5 },
     { name: 'Havells Prolife Digi', price: 4499, platform: 'Flipkart', commission: 270, rating: 4.3 },
@@ -621,7 +621,7 @@ const products = {
   ]
 };
 
-let totalCommission = 0;
+let totalCommission = 0;ca-app-pub-6956756105682569/4058458257
 let totalClicks = 0;
 let totalOrders = 0;
 let orderHistory = [];
@@ -647,7 +647,7 @@ function addMessage(content, isUser=false) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function addProductCards(prods, query) {
+function addProductCards(prods, query) {ca-app-pub-6956756105682569/4058458257
   const messages = document.getElementById('chatMessages');
   const div = document.createElement('div');
   div.className = 'msg-row';
@@ -738,7 +738,7 @@ function sendChat() {
   typing.style.display = 'flex';
 
   setTimeout(() => {
-    typing.style.display = 'none';
+    typing.style.display = 'none';ca-app-pub-6956756105682569/4058458257
     const cat = getCategory(q);
     const prods = products[cat] || products.phone;
     addProductCards(prods, q);
@@ -754,5 +754,5 @@ document.getElementById('chatInput').addEventListener('keypress', e => {
   if (e.key === 'Enter') sendChat();
 });
 </script>
-</body>
+</body>ca-app-pub-6956756105682569/4058458257
 </html>
