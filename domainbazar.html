@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DomainBazar — अपना डोमेन खरीदें</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--green-mid:#5DCAA5;
+  --coral:#D85A30;--amber:#BA7517;--blue:#185FA5;
+  --bg:#0D1117;--bg2:#161B22;--bg3:#21262D;--bg4:#30363D;
+  --border:#30363D;--border2:#484F58;
+  --text:#E6EDF3;--text2:#8B949E;--text3:#6E7681;
+  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,17,23,0.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px}
+.nav-logo{font-size:20px;font-weight:700;letter-spacing:-0.5px;cursor:pointer}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
+.nav-links a{color:var(--text2);font-size:14px;text-decoration:none;cursor:pointer;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-cart{background:var(--green);color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font)}
+.nav-cart:hover{background:var(--green-dark)}
+.cart-badge{background:#fff;color:var(--green-dark);border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+
+/* PAGES */
+.page{display:none;padding-top:60px;min-height:100vh}
+.page.active{display:block}
+
+/* HERO */
+.hero{padding:5rem 2rem 3rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(29,158,117,0.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(29,158,117,0.15);border:1px solid rgba(29,158,117,0.3);color:var(--green-mid);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:1.5rem;letter-spacing:0.5px}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;line-height:1.1;letter-spacing:-1px;margin-bottom:1rem}
+.hero h1 .hl{color:var(--green)}
+.hero p{font-size:16px;color:var(--text2);max-width:500px;margin:0 auto 2.5rem;line-height:1.7}
+.search-wrap{max-width:600px;margin:0 auto;display:flex;gap:0;border:1px solid var(--border2);border-radius:12px;overflow:hidden;background:var(--bg2)}
+.search-wrap input{flex:1;background:transparent;border:none;padding:14px 20px;font-size:16px;color:var(--text);font-family:var(--font);outline:none}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-btn{background:var(--green);color:#fff;border:none;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.2s;white-space:nowrap}
+.search-btn:hover{background:var(--green-dark)}
+.search-tags{display:flex;gap:8px;justify-content:center;margin-top:1rem;flex-wrap:wrap}
+.stag{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:var(--mono);transition:all 0.15s}
+.stag:hover{border-color:var(--green);color:var(--green)}
+
+/* SEARCH RESULT */
+.search-result-box{max-width:700px;margin:2rem auto 0;display:none}
+.sr-main{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.sr-domain{font-size:22px;font-weight:600;font-family:var(--mono)}
+.sr-domain .ext{color:var(--green)}
+.sr-status-avail{color:var(--green);font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.sr-status-taken{color:var(--coral);font-size:13px;font-weight:600}
+.sr-tlds{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
+.tld-row{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.tld-row .tname{font-family:var(--mono);font-size:14px;font-weight:500}
+.tld-row .tprice{color:var(--text2);font-size:12px}
+.tld-row .tadd{background:var(--green);color:#fff;border:none;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-weight:600;font-family:var(--font)}
+.tld-row .tadd:hover{background:var(--green-dark)}
+.tld-row.taken .tname{color:var(--text3)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;max-width:900px;margin:3rem auto 0;padding:0 2rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--text)}
+.stat-num span{color:var(--green)}
+.stat-lbl{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* SECTION */
+.section{padding:2rem 2rem;max-width:1100px;margin:0 auto}
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.section-title{font-size:18px;font-weight:600}
+.section-sub{font-size:13px;color:var(--text2)}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.fbtn{background:var(--bg2);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--font);transition:all 0.15s}
+.fbtn.active,.fbtn:hover{background:var(--green-light);border-color:var(--green);color:var(--green-dark);font-weight:600}
+
+/* DOMAIN CARDS */
+.domains-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.d-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:border-color 0.2s,transform 0.15s;position:relative;overflow:hidden}
+.d-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background 0.2s}
+.d-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.d-card:hover::before{background:linear-gradient(90deg,var(--green),var(--green-mid))}
+.d-card.featured{border-color:rgba(29,158,117,0.4)}
+.d-card.featured::before{background:linear-gradient(90deg,var(--green),var(--green-mid))}
+.badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:5px;font-weight:600;margin-bottom:10px;letter-spacing:0.3px}
+.badge.featured{background:rgba(29,158,117,0.2);color:var(--green-mid);border:1px solid rgba(29,158,117,0.3)}
+.badge.hot{background:rgba(216,90,48,0.15);color:#F0997B;border:1px solid rgba(216,90,48,0.25)}
+.badge.new{background:rgba(24,95,165,0.15);color:#85B7EB;border:1px solid rgba(24,95,165,0.25)}
+.badge.avail{background:rgba(99,153,34,0.15);color:#97C459;border:1px solid rgba(99,153,34,0.25)}
+.d-name{font-size:19px;font-weight:600;font-family:var(--mono);margin-bottom:4px;word-break:break-all}
+.d-name .dext{color:var(--green)}
+.d-desc{font-size:12px;color:var(--text3);margin-bottom:14px}
+.d-footer{display:flex;align-items:center;justify-content:space-between}
+.d-price{font-size:20px;font-weight:700}
+.d-price-yr{font-size:11px;color:var(--text3);display:block;margin-top:1px}
+.d-buy{background:var(--green);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.2s}
+.d-buy:hover{background:var(--green-dark)}
+.d-buy.added{background:var(--bg3);color:var(--green);border:1px solid var(--green)}
+
+/* PRICING PAGE */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:1100px;margin:0 auto;padding:0 2rem 3rem}
+.p-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:border-color 0.2s}
+.p-card:hover{border-color:var(--border2)}
+.p-card.popular{border-color:var(--green);position:relative}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:3px 14px;border-radius:10px;white-space:nowrap}
+.p-ext{font-size:28px;font-weight:700;font-family:var(--mono);color:var(--text);margin-bottom:4px}
+.p-price{font-size:22px;font-weight:700;color:var(--green);margin:10px 0 4px}
+.p-yr{font-size:11px;color:var(--text3)}
+.p-features{margin:14px 0;list-style:none}
+.p-features li{font-size:13px;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:8px}
+.p-features li::before{content:'✓';color:var(--green);font-weight:700;font-size:12px}
+.p-btn{width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all 0.15s}
+.p-btn:hover,.p-card.popular .p-btn{background:var(--green);border-color:var(--green);color:#fff}
+
+/* CART PAGE */
+.cart-layout{max-width:900px;margin:0 auto;padding:2rem;display:grid;grid-template-columns:1fr 320px;gap:1.5rem}
+@media(max-width:700px){.cart-layout{grid-template-columns:1fr}}
+.cart-items{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.cart-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:15px;font-weight:600}
+.cart-item{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.cart-item:last-child{border-bottom:none}
+.ci-domain{font-family:var(--mono);font-size:16px;font-weight:500}
+.ci-domain .ext{color:var(--green)}
+.ci-desc{font-size:12px;color:var(--text3);margin-top:2px}
+.ci-price{font-size:16px;font-weight:600;white-space:nowrap}
+.ci-remove{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:4px;line-height:1;transition:color 0.15s}
+.ci-remove:hover{color:var(--coral)}
+.cart-empty{padding:3rem;text-align:center;color:var(--text3)}
+.cart-empty .icon{font-size:48px;margin-bottom:1rem}
+.order-summary{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;height:fit-content;position:sticky;top:70px}
+.os-title{font-size:15px;font-weight:600;margin-bottom:1rem;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.os-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--text2)}
+.os-row.total{color:var(--text);font-size:16px;font-weight:600;border-top:1px solid var(--border);margin-top:8px;padding-top:12px}
+.os-checkout{width:100%;background:var(--green);color:#fff;border:none;padding:13px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:1rem;transition:background 0.2s}
+.os-checkout:hover{background:var(--green-dark)}
+.os-safe{font-size:11px;color:var(--text3);text-align:center;margin-top:8px}
+.promo-row{display:flex;gap:8px;margin-top:12px}
+.promo-row input{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;font-family:var(--font);outline:none}
+.promo-row button{background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:var(--font)}
+.promo-row button:hover{border-color:var(--green);color:var(--green)}
+
+/* CHECKOUT PAGE */
+.checkout-wrap{max-width:700px;margin:0 auto;padding:2rem}
+.checkout-step{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.cs-title{font-size:15px;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px}
+.cs-num{background:var(--green);color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;color:var(--text2);font-weight:500}
+.form-group input,.form-group select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;font-family:var(--font);outline:none;transition:border-color 0.15s;width:100%}
+.form-group input:focus,.form-group select:focus{border-color:var(--green)}
+.form-group select option{background:var(--bg3)}
+.pay-methods{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.pm{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all 0.15s;font-size:12px;color:var(--text2)}
+.pm:hover,.pm.selected{border-color:var(--green);color:var(--green);background:rgba(29,158,117,0.08)}
+.pm-icon{font-size:22px;display:block;margin-bottom:4px}
+.place-order{width:100%;background:var(--green);color:#fff;border:none;padding:14px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);transition:background 0.2s;margin-top:1rem}
+.place-order:hover{background:var(--green-dark)}
+
+/* SUCCESS PAGE */
+.success-page{display:none;padding:5rem 2rem;text-align:center;min-height:100vh;align-items:center;justify-content:center;flex-direction:column}
+.success-page.active{display:flex}
+.success-icon{width:80px;height:80px;background:rgba(29,158,117,0.15);border:2px solid var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 1.5rem}
+.success-page h2{font-size:28px;font-weight:700;margin-bottom:0.75rem}
+.success-page p{color:var(--text2);font-size:15px;max-width:400px;line-height:1.6}
+.order-id{font-family:var(--mono);background:var(--bg2);border:1px solid var(--border);padding:8px 20px;border-radius:8px;font-size:14px;color:var(--green);margin:1.25rem auto;display:inline-block}
+.back-btn{background:var(--green);color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:1rem}
+.back-btn:hover{background:var(--green-dark)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg3);border:1px solid var(--green);color:var(--text);padding:12px 20px;border-radius:10px;font-size:14px;font-weight:500;z-index:999;transform:translateY(100px);opacity:0;transition:all 0.3s;pointer-events:none;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast .t-icon{margin-right:8px}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--text3);font-size:13px;margin-top:4rem}
+footer span{color:var(--green)}
+
+/* MOBILE NAV */
+@media(max-width:600px){
+  .nav-links{gap:1rem}
+  .nav-links a{font-size:13px}
+  .hero h1{font-size:1.8rem}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cart-layout{grid-template-columns:1fr}
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.page.active .hero-badge,.page.active .hero h1,.page.active .hero p,.page.active .search-wrap{animation:fadeUp 0.4s ease both}
+.page.active .hero h1{animation-delay:0.05s}
+.page.active .hero p{animation-delay:0.1s}
+.page.active .search-wrap{animation-delay:0.15s}
+
+/* ABOUT PAGE */
+.about-content{max-width:800px;margin:0 auto;padding:2rem}
+.about-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.about-card h3{font-size:16px;font-weight:600;margin-bottom:0.75rem;color:var(--green)}
+.about-card p{font-size:14px;color:var(--text2);line-height:1.7}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:1rem}
+.team-card{background:var(--bg3);border-radius:10px;padding:1.25rem;text-align:center}
+.team-av{width:56px;height:56px;border-radius:50%;background:rgba(29,158,117,0.15);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;font-weight:700;color:var(--green)}
+.team-name{font-size:14px;font-weight:600}
+.team-role{font-size:12px;color:var(--text3);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Domain<span>Bazar</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" id="nav-home" class="active">होम</a>
+    <a onclick="showPage('pricing')" id="nav-pricing">प्राइसिंग</a>
+    <a onclick="showPage('about')" id="nav-about">हमारे बारे में</a>
+  </div>
+  <button class="nav-cart" onclick="showPage('cart')">
+    🛒 कार्ट <span class="cart-badge" id="cartBadge">0</span>
+  </button>
+</nav>
+
+<!-- ====== HOME PAGE ====== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">🇮🇳 भारत का #1 डोमेन मार्केटप्लेस</div>
+    <h1>अपना <span class="hl">परफेक्ट डोमेन</span><br/>खरीदें — सस्ते में</h1>
+    <p>₹599 से शुरू। .com, .in, .net, .org और 50+ एक्सटेंशन। तुरंत रजिस्ट्रेशन।</p>
+    <div class="search-wrap">
+      <input type="text" id="heroSearch" placeholder="अपना डोमेन नाम लिखें..." autocomplete="off"/>
+      <button class="search-btn" onclick="doSearch()">खोजें →</button>
+    </div>
+    <div class="search-tags">
+      <span class="stag" onclick="quickSearch('mybusiness')">mybusiness</span>
+      <span class="stag" onclick="quickSearch('startupindia')">startupindia</span>
+      <span class="stag" onclick="quickSearch('techstore')">techstore</span>
+      <span class="stag" onclick="quickSearch('newsportal')">newsportal</span>
+      <span class="stag" onclick="quickSearch('digitalagency')">digitalagency</span>
+    </div>
+  </div>
+
+  <!-- Search Result -->
+  <div class="search-result-box" id="searchResultBox">
+    <div class="sr-main" id="srMain"></div>
+    <div class="sr-tlds" id="srTlds" style="margin-top:8px;max-width:700px;margin-left:auto;margin-right:auto"></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num">12<span>,400+</span></div><div class="stat-lbl">डोमेन उपलब्ध</div></div>
+    <div class="stat-card"><div class="stat-num">₹<span>599</span></div><div class="stat-lbl">से शुरुआत</div></div>
+    <div class="stat-card"><div class="stat-num">50<span>+</span></div><div class="stat-lbl">एक्सटेंशन</div></div>
+    <div class="stat-card"><div class="stat-num">24<span>/7</span></div><div class="stat-lbl">फ्री सपोर्ट</div></div>
+  </div>
+
+  <!-- Featured Domains -->
+  <div class="section" style="margin-top:2rem">
+    <div class="section-hd">
+      <div class="section-title">🔥 फीचर्ड डोमेन</div>
+    </div>
+    <div class="filter-row" id="filterRow"></div>
+    <div class="domains-grid" id="domainsGrid"></div>
+  </div>
+
+  <footer>© 2025 <span>DomainBazar</span> — Powered by India 🇮🇳 &nbsp;|&nbsp; सभी अधिकार सुरक्षित</footer>
+</div>
+
+<!-- ====== PRICING PAGE ====== -->
+<div class="page" id="page-pricing">
+  <div class="section" style="padding-top:3rem">
+    <div class="section-hd" style="flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:2rem">
+      <div class="section-title" style="font-size:24px">डोमेन प्राइसिंग</div>
+      <div class="section-sub">सभी प्राइस प्रति वर्ष, GST अलग</div>
+    </div>
+  </div>
+  <div class="pricing-grid" id="pricingGrid"></div>
+  <footer>© 2025 <span>DomainBazar</span> — सभी अधिकार सुरक्षित</footer>
+</div>
+
+<!-- ====== ABOUT PAGE ====== -->
+<div class="page" id="page-about">
+  <div class="about-content">
+    <div style="padding-top:2rem;margin-bottom:1.5rem">
+      <div class="section-title" style="font-size:24px">हमारे बारे में</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:4px">भारत का सबसे भरोसेमंद डोमेन प्लेटफॉर्म</div>
+    </div>
+    <div class="about-card">
+      <h3>हम कौन हैं?</h3>
+      <p>DomainBazar 2019 में शुरू हुआ, एक छोटे से विचार से — कि हर भारतीय बिजनेस को उसका परफेक्ट डोमेन मिलना चाहिए, वो भी सस्ते में और आसानी से। आज हम 50,000+ ग्राहकों को सर्व करते हैं।</p>
+    </div>
+    <div class="about-card">
+      <h3>हमारी खासियत</h3>
+      <p>• तुरंत डोमेन रजिस्ट्रेशन — 60 सेकंड में<br/>• 24/7 हिंदी और अंग्रेजी सपोर्ट<br/>• फ्री DNS मैनेजमेंट और SSL<br/>• UPI, नेट बैंकिंग, कार्ड — सभी पेमेंट<br/>• 100% मनी-बैक गारंटी (15 दिन)</p>
+    </div>
+    <div class="about-card">
+      <h3>हमारी टीम</h3>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-av">RK</div><div class="team-name">राहुल कुमार</div><div class="team-role">CEO & Founder</div></div>
+        <div class="team-card"><div class="team-av">PS</div><div class="team-name">प्रिया शर्मा</div><div class="team-role">CTO</div></div>
+        <div class="team-card"><div class="team-av">AM</div><div class="team-name">अनुज मेहता</div><div class="team-role">Head of Support</div></div>
+        <div class="team-card"><div class="team-av">NK</div><div class="team-name">नेहा खान</div><div class="team-role">Marketing Lead</div></div>
+      </div>
+    </div>
+    <div class="about-card">
+      <h3>संपर्क करें</h3>
+      <p>📧 support@domainbazar.in<br/>📞 1800-XXX-XXXX (टोल फ्री)<br/>📍 नोएडा, उत्तर प्रदेश, भारत</p>
+    </div>
+  </div>
+  <footer>© 2025 <span>DomainBazar</span> — सभी अधिकार सुरक्षित</footer>
+</div>
+
+<!-- ====== CART PAGE ====== -->
+<div class="page" id="page-cart">
+  <div class="cart-layout">
+    <div>
+      <div style="font-size:20px;font-weight:600;margin-bottom:1rem">🛒 आपका कार्ट</div>
+      <div class="cart-items" id="cartItems"></div>
+    </div>
+    <div>
+      <div class="order-summary">
+        <div class="os-title">ऑर्डर समरी</div>
+        <div id="osSummary"></div>
+        <div class="promo-row">
+          <input type="text" id="promoInput" placeholder="प्रोमो कोड"/>
+          <button onclick="applyPromo()">Apply</button>
+        </div>
+        <div id="promoMsg" style="font-size:12px;color:var(--green);margin-top:6px;display:none">✅ SAVE10 applied — 10% off!</div>
+        <button class="os-checkout" onclick="showPage('checkout')">Checkout करें →</button>
+        <div class="os-safe">🔒 Secure Checkout · SSL Protected</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== CHECKOUT PAGE ====== -->
+<div class="page" id="page-checkout">
+  <div class="checkout-wrap">
+    <div style="font-size:20px;font-weight:600;margin-bottom:1.5rem">💳 Checkout</div>
+
+    <div class="checkout-step">
+      <div class="cs-title"><span class="cs-num">1</span> व्यक्तिगत जानकारी</div>
+      <div class="form-grid">
+        <div class="form-group"><label>पहला नाम</label><input type="text" placeholder="राहुल"/></div>
+        <div class="form-group"><label>अंतिम नाम</label><input type="text" placeholder="कुमार"/></div>
+        <div class="form-group"><label>ईमेल</label><input type="email" placeholder="rahul@email.com"/></div>
+        <div class="form-group"><label>फोन नंबर</label><input type="tel" placeholder="+91 9876543210"/></div>
+        <div class="form-group" style="grid-column:1/-1"><label>पता</label><input type="text" placeholder="हाउस नंबर, गली, शहर"/></div>
+        <div class="form-group"><label>राज्य</label>
+          <select>
+            <option>उत्तर प्रदेश</option><option>दिल्ली</option><option>महाराष्ट्र</option>
+            <option>राजस्थान</option><option>गुजरात</option><option>बिहार</option>
+            <option>मध्य प्रदेश</option><option>पश्चिम बंगाल</option>
+          </select>
+        </div>
+        <div class="form-group"><label>पिन कोड</label><input type="text" placeholder="226001"/></div>
+      </div>
+    </div>
+
+    <div class="checkout-step">
+      <div class="cs-title"><span class="cs-num">2</span> पेमेंट तरीका</div>
+      <div class="pay-methods">
+        <div class="pm selected" onclick="selectPM(this)"><span class="pm-icon">📱</span>UPI</div>
+        <div class="pm" onclick="selectPM(this)"><span class="pm-icon">💳</span>कार्ड</div>
+        <div class="pm" onclick="selectPM(this)"><span class="pm-icon">🏦</span>नेट बैंकिंग</div>
+      </div>
+      <div id="upiSection">
+        <div class="form-group"><label>UPI ID</label><input type="text" placeholder="yourname@upi"/></div>
+      </div>
+    </div>
+
+    <div class="checkout-step">
+      <div class="cs-title"><span class="cs-num">3</span> ऑर्डर समरी</div>
+      <div id="checkoutSummary"></div>
+    </div>
+
+    <button class="place-order" onclick="placeOrder()">✅ ऑर्डर कन्फर्म करें</button>
+  </div>
+</div>
+
+<!-- ====== SUCCESS PAGE ====== -->
+<div class="page" id="page-success">
+  <div class="success-page active">
+    <div class="success-icon">✅</div>
+    <h2>ऑर्डर सफल हो गया!</h2>
+    <p>बधाई हो! आपके डोमेन रजिस्टर हो गए हैं। कन्फर्मेशन ईमेल भेज दिया गया है।</p>
+    <div class="order-id" id="orderId">Order #DB-XXXXXX</div>
+    <p style="color:var(--text2);font-size:13px">DNS सेटअप में 24 घंटे तक का समय लग सकता है।</p>
+    <button class="back-btn" onclick="resetAndHome()">होम पेज पर जाएं →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const allDomains = [
+  {name:"techstartup",ext:".com",price:12999,badge:"featured",desc:"टेक स्टार्टअप के लिए"},
+  {name:"indiastore",ext:".in",price:2499,badge:"hot",desc:"ई-कॉमर्स के लिए"},
+  {name:"digitalagency",ext:".com",price:8999,badge:"new",desc:"डिजिटल एजेंसी"},
+  {name:"healthplus",ext:".net",price:4599,badge:"avail",desc:"हेल्थकेयर सेक्टर"},
+  {name:"smartbiz",ext:".in",price:1299,badge:"avail",desc:"किफायती बिजनेस डोमेन"},
+  {name:"cloudservices",ext:".io",price:15999,badge:"featured",desc:"SaaS प्रोडक्ट के लिए"},
+  {name:"newsportal",ext:".org",price:3299,badge:"hot",desc:"न्यूज़ और मीडिया"},
+  {name:"edulearn",ext:".net",price:5799,badge:"new",desc:"एजुकेशन प्लेटफॉर्म"},
+  {name:"shopnow",ext:".com",price:19999,badge:"featured",desc:"प्रीमियम शॉपिंग डोमेन"},
+  {name:"startupindia",ext:".in",price:3499,badge:"hot",desc:"स्टार्टअप इकोसिस्टम"},
+  {name:"fintech",ext:".io",price:24999,badge:"featured",desc:"फिनटेक कंपनियों के लिए"},
+  {name:"greenenergy",ext:".org",price:2999,badge:"avail",desc:"क्लीन एनर्जी ब्रांड"},
+  {name:"foodie",ext:".com",price:7999,badge:"hot",desc:"रेस्टोरेंट और फूड"},
+  {name:"traveldeals",ext:".in",price:1999,badge:"new",desc:"ट्रैवल एजेंसी"},
+  {name:"fashionhub",ext:".net",price:4999,badge:"avail",desc:"फैशन और लाइफस्टाइल"},
+  {name:"realestate",ext:".com",price:22999,badge:"featured",desc:"प्रॉपर्टी बिजनेस"},
+];
+
+const tldData = [
+  {ext:".com",price:999,popular:true,features:["सबसे लोकप्रिय","ग्लोबल पहचान","SEO फायदा","फ्री SSL"]},
+  {ext:".in",price:599,popular:false,features:["भारतीय पहचान","सस्ता","लोकल SEO","24/7 सपोर्ट"]},
+  {ext:".net",price:849,popular:false,features:["नेटवर्क के लिए","टेक ब्रांड","फ्री DNS","ईमेल होस्टिंग"]},
+  {ext:".org",price:799,popular:false,features:["NGO & Nonprofits","विश्वसनीय","फ्री WHOIS","SSL शामिल"]},
+  {ext:".io",price:1499,popular:false,features:["स्टार्टअप फेवरेट","टेक पहचान","प्रीमियम लुक","API फ्रेंडली"]},
+  {ext:".co",price:1299,popular:false,features:["शॉर्ट & स्मार्ट","ग्लोबल अपील","मॉडर्न ब्रांड","फास्ट DNS"]},
+  {ext:".shop",price:699,popular:false,features:["शॉपिंग के लिए","e-Commerce","बायर्स को याद","SEO बूस्ट"]},
+  {ext:".tech",price:1199,popular:false,features:["टेक कंपनियां","इनोवेटिव लुक","डेव फ्रेंडली","प्रीमियम"]},
+];
+
+const tldPrices = {".com":999,".in":599,".net":849,".org":799,".io":1499,".co":1299,".shop":699,".tech":1199};
+const takenList = ["google","facebook","amazon","flipkart","youtube","instagram","twitter","whatsapp"];
+
+let cart = [];
+let promoApplied = false;
+let currentFilter = "all";
+
+// ===== RENDER HOME =====
+function renderFilters() {
+  const exts = ["all",".com",".in",".net",".org",".io"];
+  document.getElementById("filterRow").innerHTML = exts.map(e =>
+    `<button class="fbtn${e==="all"?" active":""}" onclick="filterDomains('${e}',this)">${e==="all"?"सभी":e}</button>`
+  ).join("");
+}
+
+function renderDomains(filter) {
+  const list = filter === "all" ? allDomains : allDomains.filter(d => d.ext === filter);
+  const inCart = d => cart.some(c => c.name===d.name && c.ext===d.ext);
+  document.getElementById("domainsGrid").innerHTML = list.map(d => `
+    <div class="d-card ${d.badge==="featured"?"featured":""}">
+      <span class="badge ${d.badge}">${{featured:"⭐ फीचर्ड",hot:"🔥 हॉट",new:"✨ नया",avail:"✅ उपलब्ध"}[d.badge]}</span>
+      <div class="d-name">${d.name}<span class="dext">${d.ext}</span></div>
+      <div class="d-desc">${d.desc}</div>
+      <div class="d-footer">
+        <div>
+          <div class="d-price">₹${d.price.toLocaleString("en-IN")}</div>
+          <span class="d-price-yr">/ साल</span>
+        </div>
+        <button class="d-buy${inCart(d)?" added":""}" onclick="addToCart('${d.name}','${d.ext}',${d.price},'${d.desc}')">
+          ${inCart(d)?"✅ जोड़ा":"🛒 खरीदें"}
+        </button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function filterDomains(ext, btn) {
+  currentFilter = ext;
+  document.querySelectorAll(".fbtn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderDomains(ext);
+}
+
+// ===== RENDER PRICING =====
+function renderPricing() {
+  document.getElementById("pricingGrid").innerHTML = tldData.map(t => `
+    <div class="p-card${t.popular?" popular":""}">
+      ${t.popular?'<div class="popular-badge">⭐ सबसे लोकप्रिय</div>':""}
+      <div class="p-ext">${t.ext}</div>
+      <div class="p-price">₹${t.price.toLocaleString("en-IN")}</div>
+      <div class="p-yr">/ साल · GST अलग</div>
+      <ul class="p-features">${t.features.map(f=>`<li>${f}</li>`).join("")}</ul>
+      <button class="p-btn" onclick="showPage('home');quickSearch('mybusiness')">डोमेन खोजें</button>
+    </div>
+  `).join("");
+}
+
+// ===== SEARCH =====
+function doSearch() {
+  const val = document.getElementById("heroSearch").value.trim().toLowerCase().replace(/\s+/g,"").replace(/\.[a-z]+$/,"");
+  if (!val) { showToast("⚠️ कृपया डोमेन नाम लिखें"); return; }
+  const taken = takenList.includes(val);
+  const box = document.getElementById("searchResultBox");
+  const main = document.getElementById("srMain");
+  const tlds = document.getElementById("srTlds");
+
+  main.innerHTML = `
+    <div>
+      <div class="sr-domain">${val}<span class="ext">.com</span></div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px">खोज परिणाम</div>
+    </div>
+    <div class="${taken?"sr-status-taken":"sr-status-avail"}">${taken?"❌ .com उपलब्ध नहीं":"✅ .com उपलब्ध है!"}</div>
+  `;
+
+  tlds.innerHTML = Object.entries(tldPrices).map(([ext,price]) => {
+    const isTaken = taken && ext===".com";
+    return `<div class="tld-row${isTaken?" taken":""}">
+      <div>
+        <div class="tname">${val}${ext}</div>
+        <div class="tld-price">${isTaken?"उपलब्ध नहीं":"₹"+price.toLocaleString("en-IN")+"/साल"}</div>
+      </div>
+      ${isTaken?'<span style="color:var(--text3);font-size:18px">✗</span>':`<button class="tadd" onclick="addToCart('${val}','${ext}',${price},'खोज परिणाम')">Add +</button>`}
+    </div>`;
+  }).join("");
+
+  box.style.display = "block";
+  box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function quickSearch(term) {
+  document.getElementById("heroSearch").value = term;
+  doSearch();
+}
+
+// ===== CART =====
+function addToCart(name, ext, price, desc) {
+  const key = name+ext;
+  if (cart.some(c=>c.name+c.ext===key)) { showToast("⚠️ पहले से कार्ट में है!"); return; }
+  cart.push({name,ext,price,desc});
+  updateCartUI();
+  renderDomains(currentFilter);
+  showToast(`✅ ${name}${ext} कार्ट में जोड़ा!`);
+}
+
+function removeFromCart(idx) {
+  cart.splice(idx,1);
+  updateCartUI();
+  renderCart();
+  renderDomains(currentFilter);
+}
+
+function updateCartUI() {
+  document.getElementById("cartBadge").textContent = cart.length;
+}
+
+function renderCart() {
+  const el = document.getElementById("cartItems");
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="cart-empty"><div class="icon">🛒</div><p style="font-size:15px;margin-bottom:8px">कार्ट खाली है</p><p style="font-size:13px">डोमेन खोजें और कार्ट में जोड़ें</p><br/><button onclick="showPage('home')" style="background:var(--green);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;cursor:pointer;font-family:var(--font)">डोमेन खोजें</button></div>`;
+    document.getElementById("osSummary").innerHTML = `<div style="color:var(--text3);font-size:13px;padding:8px 0">कोई आइटम नहीं</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="cart-header">आपके ${cart.length} डोमेन</div>` +
+    cart.map((d,i) => `
+      <div class="cart-item">
+        <div>
+          <div class="ci-domain">${d.name}<span class="ext">${d.ext}</span></div>
+          <div class="ci-desc">${d.desc} · 1 साल</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="ci-price">₹${d.price.toLocaleString("en-IN")}</div>
+          <button class="ci-remove" onclick="removeFromCart(${i})" title="हटाएं">✕</button>
+        </div>
+      </div>
+    `).join("");
+
+  const total = cart.reduce((s,d)=>s+d.price,0);
+  const disc = promoApplied ? Math.round(total*0.1) : 0;
+  const final = total - disc;
+  const gst = Math.round(final*0.18);
+  document.getElementById("osSummary").innerHTML = `
+    <div class="os-row"><span>सबटोटल (${cart.length} डोमेन)</span><span>₹${total.toLocaleString("en-IN")}</span></div>
+    ${promoApplied?`<div class="os-row" style="color:var(--green)"><span>SAVE10 डिस्काउंट</span><span>-₹${disc.toLocaleString("en-IN")}</span></div>`:""}
+    <div class="os-row"><span>GST (18%)</span><span>₹${gst.toLocaleString("en-IN")}</span></div>
+    <div class="os-row total"><span>कुल</span><span>₹${(final+gst).toLocaleString("en-IN")}</span></div>
+  `;
+}
+
+function renderCheckoutSummary() {
+  const total = cart.reduce((s,d)=>s+d.price,0);
+  const disc = promoApplied ? Math.round(total*0.1) : 0;
+  const final = total - disc;
+  const gst = Math.round(final*0.18);
+  document.getElementById("checkoutSummary").innerHTML = cart.map(d=>
+    `<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:var(--mono)">${d.name}${d.ext}</span>
+      <span>₹${d.price.toLocaleString("en-IN")}</span>
+    </div>`
+  ).join("") + `
+    <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;padding:10px 0;margin-top:4px;color:var(--green)">
+      <span>कुल भुगतान</span><span>₹${(final+gst).toLocaleString("en-IN")}</span>
+    </div>
+  `;
+}
+
+function applyPromo() {
+  const code = document.getElementById("promoInput").value.trim().toUpperCase();
+  if (code === "SAVE10") {
+    promoApplied = true;
+    document.getElementById("promoMsg").style.display = "block";
+    renderCart();
+    showToast("🎉 10% डिस्काउंट मिला!");
+  } else {
+    showToast("❌ गलत प्रोमो कोड");
+  }
+}
+
+// ===== CHECKOUT =====
+function selectPM(el) {
+  document.querySelectorAll(".pm").forEach(p=>p.classList.remove("selected"));
+  el.classList.add("selected");
+}
+
+function placeOrder() {
+  if (cart.length === 0) { showToast("⚠️ कार्ट खाली है!"); return; }
+  const id = "DB-" + Math.random().toString(36).substr(2,6).toUpperCase();
+  document.getElementById("orderId").textContent = "Order #" + id;
+  cart = [];
+  promoApplied = false;
+  updateCartUI();
+  showPage("success");
+}
+
+function resetAndHome() {
+  showPage("home");
+}
+
+// ===== NAVIGATION =====
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+name).classList.add("active");
+  document.querySelectorAll(".nav-links a").forEach(a=>a.classList.remove("active"));
+  const navEl = document.getElementById("nav-"+name);
+  if (navEl) navEl.classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  if (name==="cart") renderCart();
+  if (name==="checkout") { renderCheckoutSummary(); }
+  if (name==="pricing") renderPricing();
+}
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.innerHTML = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 2800);
+}
+
+// ===== ENTER KEY =====
+document.addEventListener("keydown", e => {
+  if (e.key==="Enter" && document.activeElement.id==="heroSearch") doSearch();
+});
+
+// ===== INIT =====
+renderFilters();
+renderDomains("all");
+</script>
+</body>
+</html>
